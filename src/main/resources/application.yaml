@@ -4,10 +4,17 @@ spring:
 
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+    loadbalancer:
+      cache:
+        ttl: 5s
+      health-check:
+        enabled: true
 
 server:
   port: 8080
@@ -16,12 +23,19 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 5
+  instance: 
+    leaseRenewalIntervalInSeconds: 10  # Sends heartbeat every 10 seconds
+    leaseExpirationDurationInSeconds: 30  # Instance expires if no heartbeat for 30 seconds
+    preferIpAddress: true
 
 management:
   endpoints:
     web:
       exposure:
-        include: info,health
+        include: "*"
   info:
     env:
       enabled: true
